@@ -123,9 +123,17 @@ const getUserProfile = async(req, res) => {
   }
 }
 
+const updateUserProfile = async(req, res) => {
+    const {username, email, password, role} = req.body;
+    if(!username && !email){
+        return res.status(400).json({ msg: "Enter details to change/Update" });
+    }
+}
+
 export {
     registerUser,
     loginUser,
     logoutUser,
     getUserProfile,
+    updateUserProfile,
 }
