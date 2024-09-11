@@ -123,10 +123,58 @@ const getUserProfile = async(req, res) => {
   }
 }
 
-const updateUserProfile = async(req, res) => {
+const updateUserDetails = async(req, res) => {
     const {username, email, password, role} = req.body;
     if(!username && !email){
         return res.status(400).json({ msg: "Enter details to change/Update" });
+    }
+    
+    try {
+        const user = await User.findByIdAndUpdate(
+            req.user?._id,
+            {
+                $set: {
+                    fullName,
+                    email: email
+                }
+            },
+            {
+                new: true
+            }
+        ).select("-password")
+    
+        if(!user){
+            return res.status(401).json({ msg: "Something went wrong while updating."})
+        }
+    
+        return res.status(200).json({
+            msg: "Details Updated Successfully",
+            user
+        })
+    } catch (error) {
+        return res.status(501).json({ msg: "Server Error, while Updating!!"})
+    }
+}
+
+const changePassword = async(req, res) => {
+    const {oldPassword, newPassword} = req.body;
+
+    try {
+        const user = await User.findById(req.user?._id)
+    
+        const isPasswordCorrect = await user.isPasswordCorrect(oldPassword);
+        if(!isPasswordCorrect){
+            return res.status(401).json({ msg: "Old Password is Incorrect"})
+        }
+    
+        user.password = newPassword;
+        await user.save({ validateBeforeSave: false})
+    
+        return res.status(200).json({
+            msg: "Password Changed Successfully",
+        })
+    } catch (error) {
+        return res.status(501).json({ msg: "Server Error, while changing password"})
     }
 }
 
@@ -135,5 +183,6 @@ export {
     loginUser,
     logoutUser,
     getUserProfile,
-    updateUserProfile,
+    updateUserDetails,
+    changePassword,
 }
