@@ -80,9 +80,65 @@ const getCourseById = async(req, res) => {
     }
 }
 
-const updateCourse = async(req, res) => {}
+const updateCourse = async(req, res) => {
+    const { courseId } = req.params;
+     const {title, description, price} = req.body;
+    if (!title && !description && !teacher && !price) {
+        return res.status(400).json({ msg: "Enter some details to change/update"})
+     }
 
-const deleteCourse = async(req, res) => {}
+    try {
+         const course = await Course.findById(req.user?._id);
+         if(course?.teacher.toString() !== req.user?._id.toString()){
+            return res.status(400).json({ msg: "You are not authorized!! Only owner of this course can change details!!"})
+         }
+         
+         const updateCourse = await Course.findByIdAndUpdate(courseId,
+            {
+                $set: {
+                    title,
+                    description,
+                    price,
+                }
+            },
+            { new: true }
+         )
+    
+         if(!updateCourse){
+            return res.status(401).json({ msg: "Something went wrong while updating course details"})
+         }
+    
+         return res.status(200).json({
+            updateCourse,
+            msg: "Details Updated Successfully!!"
+         })
+    } catch (error) {
+        return res.status(500).json({ msg: "Server error while updating course details!!"})
+    }
+}
+
+const deleteCourse = async(req, res) => {
+    const { courseId } = req.params;
+    if(!isValidObjectId(courseId)){
+        return res.status(400).json({msg: "Invalid Id"})
+    }
+
+    try {
+        const deleteCourse = await Course.findByIdAndDelete(courseId);
+        if (!deleteCourse) {
+            return res.status(400).json({ msg: "Something went wrong while deleting course!"})
+        }
+    
+        return res.status(200).json({
+            deleteCourse,
+            msg: "Course deleted Successfully!!"
+        })
+    } catch (error) {
+        return res.status(500).json({
+            msg: "Server Error, while deleting course!!"
+        })
+    }
+}
 
 export {
     createCourse,

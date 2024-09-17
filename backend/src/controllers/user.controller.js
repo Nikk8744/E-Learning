@@ -124,7 +124,7 @@ const getUserProfile = async(req, res) => {
 }
 
 const updateUserDetails = async(req, res) => {
-    const {username, email, password, role} = req.body;
+    const {username, email} = req.body;
     if(!username && !email){
         return res.status(400).json({ msg: "Enter details to change/Update" });
     }

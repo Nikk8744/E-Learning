@@ -23,13 +23,13 @@ const userSchema = new Schema(
         role: {
             type: String,
             default: "Student",
-            enum: ["Student", "Instructor", "Reviewer"],
+            enum: ["Student", "Teacher", "Reviewer"],
         },
         password: {
             type: String,
             required: [true, "Password is required"],
             trim: true,
-            minlength: [6, 'password must have at least (6) caracters'],
+            minlength: [6, 'password must have at least (6) characters'],
         },
         refreshToken: {
             type: String,

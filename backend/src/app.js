@@ -9,9 +9,11 @@ app.use(express.static("public"));
 app.use(cookieParser())
 
 // import Routes 
-import userRoutes from "./routes/user.routes.js";
+import userRoutes from "./routes/user.js";
+import courseRoutes from "./routes/course.js";
 
 // declare routes
 app.use("/api/v1/users", userRoutes);
+app.use("/api/v1/course", courseRoutes);
 
 export { app }
