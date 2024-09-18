@@ -34,7 +34,7 @@ const userSchema = new Schema(
         refreshToken: {
             type: String,
         },
-        coursePurchased: [{
+        courseAdded: [{
             type: Schema.Types.ObjectId,
             ref: "Courses",
         }],

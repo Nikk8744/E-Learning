@@ -1,19 +1,25 @@
 import { isValidObjectId } from "mongoose";
-import { Course } from "../models/course.model";
-import { User } from "../models/user.model";
+import { Course } from "../models/course.js";
+import { User } from "../models/user.js";
 
 const createCourse = async(req, res) => {
-    const [title, description, price, material] = req.body;
-    const teacherId = req.user?.id;
+    const {title, description, price, material} = req.body;
+    const teacherId = req.user?._id;
 
     if(
-        [title, description, teacher, price, material].some((field) => field?.trim() === "")
+        [title, description, price].some((field) => {
+            if (typeof field === 'Number' || typeof field !== 'String') {
+                field = field.toString();
+            }
+            return field.trim() === "";
+        })
     ){
         return res.status(400).json({ msg: "All fields are required"})
     }
+    
 
     try {
-        const teacher = await User.findById({teacherId});
+        const teacher = await User.findById(teacherId);
         if(teacher.role !== "Teacher"){
             return res.status(401).json({ msg: "Only teachers can create a course"})
         }
@@ -43,7 +49,8 @@ const createCourse = async(req, res) => {
 
 const getAllCourse = async(req, res) => {
     try {
-        const courses = await Course.find().populate('teacherId', 'name email').populate('reviews');
+        const courses = await Course.find().populate('teacher', 'name email').populate('reviews');
+        console.log(courses)
         if (!courses) {
             return res.status(401).json({msg: "No courses found"})
         }
@@ -64,7 +71,7 @@ const getCourseById = async(req, res) => {
     }
 
     try {
-        const course = await Course.findById(courseId).populate('teacherId', 'name email').populate('reviews');
+        const course = await Course.findById(courseId).populate('teacher', 'name email').populate('reviews');
         if(!course){
             return res.status(400).json({msg: "No such course found"})
         }
@@ -82,7 +89,8 @@ const getCourseById = async(req, res) => {
 
 const updateCourse = async(req, res) => {
     const { courseId } = req.params;
-     const {title, description, price} = req.body;
+    const {title, description, price} = req.body;
+
     if (!title && !description && !teacher && !price) {
         return res.status(400).json({ msg: "Enter some details to change/update"})
      }
