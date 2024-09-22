@@ -11,7 +11,7 @@ const addToCart = async (req, res) => {
         }
         await User.findByIdAndUpdate(req.user?._id, {
             $addToSet: {
-                courseAdded: courseId,
+                cart: courseId,
             }
         })
 
@@ -26,7 +26,7 @@ const addToCart = async (req, res) => {
 }
 
 const removeFromCart = async (req, res) => {
-    const courseId = req.params;
+    const {courseId} = req.params;
 
     try {
         const course = await Course.findById(courseId);
@@ -36,7 +36,7 @@ const removeFromCart = async (req, res) => {
 
         await User.findByIdAndUpdate(req.user?._id, {
             $pull: {
-                courseAdded: courseId,
+                cart: courseId,
             },
         })
 
@@ -49,16 +49,16 @@ const removeFromCart = async (req, res) => {
     }
 }
 
-const getCart = async(req, res) => {
+const getCart = async (req, res) => {
     try {
-        const user = await User.findById(req.user?._id).populate('courseAdded');
+        const user = await User.findById(req.user?._id).populate('cart');
         if (!user) {
             return res.status(400).json({msg: "No cart found for user"})
         }
-
+        // console.log(user)
         return res.status(200).json({
             msg: "Cart retrieved successfully",
-            courseAdded: user.courseAdded,
+            cart: user.cart,
         });
     } catch (error) {
         console.error(error);
