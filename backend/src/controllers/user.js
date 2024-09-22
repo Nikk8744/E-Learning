@@ -59,13 +59,13 @@ const loginUser = async(req, res) => {
     
         const accessToken = user.generateJwtAccessToken();
         const refreshToken = user.generateJwtRefreshToken();
-    
+
         const loggedInUser = await User.findById(user._id).select("-refreshToken -password");
         const options = {
             httpOnly: true,
-            secure: true,
+            secure: false,
         };
-    
+
         return res.status(200)
         .cookie("accessToken", accessToken, options)
         .cookie("refreshToken", refreshToken, options)
@@ -99,11 +99,11 @@ const logoutUser = async(req, res) => {
         secure: true,
     }
 
-    return res.status(400)
+    return res.status(200)
     .clearCookie("accessToken", options)
     .clearCookie("refreshToken", options)
     .json({
-        msg: "User logged out Successfully!!"
+        msg: "User logged out Successfully!!",
     })
 }
 

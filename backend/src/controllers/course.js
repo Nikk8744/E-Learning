@@ -21,7 +21,7 @@ const createCourse = async(req, res) => {
     try {
         const teacher = await User.findById(teacherId);
         if(teacher.role !== "Teacher"){
-            return res.status(401).json({ msg: "Only teachers can create a course"})
+            return res.status(403).json({ msg: "Only teachers can create a course"})
         }
     
         const course = await Course.create({
@@ -49,8 +49,8 @@ const createCourse = async(req, res) => {
 
 const getAllCourse = async(req, res) => {
     try {
-        const courses = await Course.find().populate('teacher', 'name email').populate('reviews');
-        console.log(courses)
+        const courses = await Course.find().populate('teacher', 'username email').populate('reviews');
+        // console.log(courses)
         if (!courses) {
             return res.status(401).json({msg: "No courses found"})
         }
@@ -71,7 +71,7 @@ const getCourseById = async(req, res) => {
     }
 
     try {
-        const course = await Course.findById(courseId).populate('teacher', 'name email').populate('reviews');
+        const course = await Course.findById(courseId).populate('teacher', 'username email').populate('reviews');
         if(!course){
             return res.status(400).json({msg: "No such course found"})
         }
@@ -148,10 +148,28 @@ const deleteCourse = async(req, res) => {
     }
 }
 
+const getNewCourses = async(req, res) => {
+    try {
+        const course = await Course.find().populate("teacher", "username email").sort({ createdAt: -1 });
+        if(!course){
+            return res.status(404).json({ msg: "No courses found!!" })
+        }
+    
+        return res.status(200).json({
+            msg:  "Courses fetched Successfully!!",
+            course
+        })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ msg: "Server error while retriving courses"})
+    }
+}
+
 export {
     createCourse,
     getAllCourse,
     getCourseById,
     updateCourse,
     deleteCourse,
+    getNewCourses,
 }
