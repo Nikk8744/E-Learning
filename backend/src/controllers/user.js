@@ -1,7 +1,7 @@
-import { User } from "../models/user.js";
+import { TeacherDetails, User } from "../models/user.js";
 
 const registerUser = async(req, res) => {
-    const {username, email, password, role} = req.body;
+    const {username, email, password, role, teacherDetails} = req.body;
 
     if(
         [username, email, password, role].some((field) => field?.trim() === "")
@@ -15,14 +15,22 @@ const registerUser = async(req, res) => {
          return res.status(400).json({ msg: "USer already exists" });
      }
  
-     const user = await User.create({
+     const newUser = await User.create({
          username,
          email,
          password,
          role,
-     })
+     });
+
+     if (role === "Teacher") {
+        const details = new TeacherDetails(teacherDetails);
+        await details.save();
+        newUser.teacherDetails = details._id;
+    }
+
+    await newUser.save();
  
-     const createdUser = await User.findById(user._id).select("-password -refreshToken");
+     const createdUser = await User.findById(newUser._id).select("-password -refreshToken");
  
      if(!createdUser){
          return res.status(400).json({ msg: "SOmething went wrong while registering!!"})

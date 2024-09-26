@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createCourse, deleteCourse, getAllCourse, getCourseById, updateCourse } from "../controllers/course.js";
+import { createCourse, deleteCourse, getAllCourse, getCourseById, getNewCourses, getTopRatedCourse, updateCourse } from "../controllers/course.js";
 import { isTeacher, verifyJWT } from "../middlewares/authentication.js";
 
 const router = Router();
@@ -7,7 +7,11 @@ const router = Router();
 router.route("/create").post(verifyJWT,isTeacher, createCourse);
 
 router.route("/getAll").get(getAllCourse);
+router.route("/getNewCourses").get(getNewCourses);
+router.route("/getTopCourses").get(getTopRatedCourse);
+
 router.route("/:courseId").get(getCourseById);
+
 
 router.route("/update").patch(verifyJWT, isTeacher, updateCourse);
 

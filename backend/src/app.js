@@ -10,7 +10,7 @@ app.use(express.static("public"));
 app.use(cookieParser())
 
 // app.use(cors({
-//     origin: 'http://localhost:', 
+//     origin: 'http://localhost:5173', 
 //     credentials: true, 
 // }));
 
@@ -36,3 +36,9 @@ export { app }
 // course list update delete
 // admin can see all course list 
 // whishlist
+
+// course category
+// teacher qualification experience category age 
+// reviewer 
+// course add duration
+// 

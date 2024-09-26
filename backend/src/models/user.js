@@ -38,6 +38,10 @@ const userSchema = new Schema(
             type: Schema.Types.ObjectId,
             ref: "Course",
         }],
+        teacherDetails: { 
+            type: Schema.Types.ObjectId,
+            ref: "TeacherDetails"
+        },
     },
     {
     timestamps: true
@@ -81,4 +85,31 @@ userSchema.methods.generateJwtRefreshToken = function(){
     )
 }
 
-export const User = mongoose.model("User", userSchema);
+const teacherDetailsSchema = new Schema(
+    {
+        experience: {
+            type: String,
+            required: true,
+        },
+        category: {
+            type: String,
+            required: true,
+        },
+        highestQualification: {
+            type: String,
+            required: true,
+        },
+        
+
+    },
+    { timestamps: true}
+)
+
+const User = mongoose.model("User", userSchema);
+
+const TeacherDetails = mongoose.model("TeacherDetails",  teacherDetailsSchema);
+
+export {
+    User,
+    TeacherDetails,
+}

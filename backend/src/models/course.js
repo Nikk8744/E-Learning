@@ -19,13 +19,32 @@ const courseSchema = new Schema(
             type: Number,
             required: [true, "Price is required"]
         },
+        category: {
+            type: String,
+            required: true
+        },
         material: {
             type: Schema.Types.ObjectId,
             ref: "Material",
         },
-        reviews: {
+        isApproved:{
+            type: Boolean,
+            default: false,
+        },
+        reviews: [{
             type: Schema.Types.ObjectId,
             ref: "Reviews",
+        }],
+        level: {
+            type: String,
+            enum: ["Beginner", "Intermediate", "Advanced"],
+        },
+        duration: {
+            type: String,
+        },
+        rating: {
+            type: Number,
+            default: 0,
         }
         
     },{

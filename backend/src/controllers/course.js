@@ -3,11 +3,11 @@ import { Course } from "../models/course.js";
 import { User } from "../models/user.js";
 
 const createCourse = async(req, res) => {
-    const {title, description, price, material} = req.body;
+    const {title, description, price, material, level, category, duration, rating} = req.body;
     const teacherId = req.user?._id;
 
     if(
-        [title, description, price].some((field) => {
+        [title, description, price, level, category, duration, rating].some((field) => {
             if (typeof field === 'Number' || typeof field !== 'String') {
                 field = field.toString();
             }
@@ -28,7 +28,11 @@ const createCourse = async(req, res) => {
             title,
             description,
             price,
+            category,
+            level,
             material,
+            duration,
+            rating,
             teacher: teacherId,
         })
         if(!course){
@@ -49,7 +53,8 @@ const createCourse = async(req, res) => {
 
 const getAllCourse = async(req, res) => {
     try {
-        const courses = await Course.find().populate('teacher', 'username email').populate('reviews');
+        const courses = await Course.find().populate('teacher', 'username email')
+        // .populate('reviews');
         // console.log(courses)
         if (!courses) {
             return res.status(401).json({msg: "No courses found"})
@@ -71,7 +76,8 @@ const getCourseById = async(req, res) => {
     }
 
     try {
-        const course = await Course.findById(courseId).populate('teacher', 'username email').populate('reviews');
+        const course = await Course.findById(courseId).populate('teacher', 'username email')
+        // .populate('reviews');
         if(!course){
             return res.status(400).json({msg: "No such course found"})
         }
@@ -165,6 +171,29 @@ const getNewCourses = async(req, res) => {
     }
 }
 
+const getTopRatedCourse = async(req, res) => {
+    try {
+            const topRatedCourse = await Course.find({
+                rating: {
+                    $gte: 4
+                }
+            }).populate("teacher", "username email")
+            .sort({ rating: -1});
+        
+            if(!topRatedCourse){
+                return res.status(404).json({ msg: "top rated Courses not found!!!"})
+            }
+        
+            return res.status(200).json({
+                msg: "Top Rated COurses fetched successfully!!",
+                topRatedCourse
+            });
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ msg: "Server Error! while retriving top rated courses"})
+    }
+}
+
 export {
     createCourse,
     getAllCourse,
@@ -172,4 +201,5 @@ export {
     updateCourse,
     deleteCourse,
     getNewCourses,
+    getTopRatedCourse,
 }
