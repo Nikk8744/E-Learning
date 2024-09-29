@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createCourse, deleteCourse, getAllCourse, getCourseById, getNewCourses, getTopRatedCourse, updateCourse } from "../controllers/course.js";
+import { createCourse, deleteCourse, getAllCourse, getAllCoursesOfTeacher, getCourseById, getNewCourses, getTopRatedCourse, updateCourse } from "../controllers/course.js";
 import { isTeacher, verifyJWT } from "../middlewares/authentication.js";
 
 const router = Router();
@@ -12,6 +12,7 @@ router.route("/getTopCourses").get(getTopRatedCourse);
 
 router.route("/:courseId").get(getCourseById);
 
+router.route("/:teacherId").get(isTeacher, getAllCoursesOfTeacher);
 
 router.route("/update").patch(verifyJWT, isTeacher, updateCourse);
 

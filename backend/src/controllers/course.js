@@ -194,6 +194,29 @@ const getTopRatedCourse = async(req, res) => {
     }
 }
 
+const getAllCoursesOfTeacher = async (req, res) => {
+    const teacherId = req.user?._id;
+
+    try {
+            const courses  = await Course.find({ teacher: teacherId }).populate("teacher", "username email");
+        
+            if(!courses){
+                return res.status(404).json({
+                    msg: "No courses found for the Teacher!!"
+                })
+            }
+        
+            return res.status(200).json({
+                msg: "All Courses fetched successfully!!",
+                courses,
+            })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ msg: "Server Error! while retriving all courses created by Teacher" })
+    }
+
+}
+
 export {
     createCourse,
     getAllCourse,
@@ -202,4 +225,5 @@ export {
     deleteCourse,
     getNewCourses,
     getTopRatedCourse,
+    getAllCoursesOfTeacher
 }
