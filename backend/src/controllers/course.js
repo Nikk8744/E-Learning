@@ -217,6 +217,59 @@ const getAllCoursesOfTeacher = async (req, res) => {
 
 }
 
+const getAllEnrolledCourses = async (req, res) => {
+    const studentId = req.user?._id;
+
+    try {
+            const enrolledCOurses = await Course.findById(studentId).populate("enrolledCourses");
+            if(!enrolledCOurses){
+                return res.status(404).json({
+                    msg:  "No courses found for the Student!!"
+                })
+            }
+            
+            return res.status(200).json({
+                msg:  "All Enrolled Courses fetched successfully!!",
+                enrolledCOurses,
+            })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ msg: "Server error while retriving enrolled courses"})
+    }
+}
+
+const enrollInCourse = async (req, res) => {
+    const studentId = req.user?._id;
+    const { courseId }  = req.params;
+
+    try {
+        const course = await Course.findById(courseId);
+        if(!course){
+            return res.status(404).json({ msg: "Course not found !!" })
+    
+        }
+    
+        await User.findByIdAndUpdate(
+            studentId,
+            {
+                $addToSet: {
+                    enrolledCourses: courseId
+                }
+            },
+            { new: true }
+        )
+    
+        return res.status(200).json({
+            msg:  "Student enrolled in the course successfully!!",
+        })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({  msg: "Server error while enrolling student in course" })
+
+    }
+
+}
+
 export {
     createCourse,
     getAllCourse,
@@ -225,5 +278,7 @@ export {
     deleteCourse,
     getNewCourses,
     getTopRatedCourse,
-    getAllCoursesOfTeacher
+    getAllCoursesOfTeacher,
+    getAllEnrolledCourses,
+    enrollInCourse
 }

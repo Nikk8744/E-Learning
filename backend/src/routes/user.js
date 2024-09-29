@@ -6,6 +6,11 @@ const router = Router();
 
 router.route("/register").post(registerUser);
 router.route("/login").post(loginUser);
+
+// teacher registeration and login 
+router.route("/register/teacher").post(registerUser); 
+router.route("/login/teacher").post(loginUser);       
+
 router.route("/logout").post( verifyJWT,logoutUser)
 router.route("/changePassword").post(verifyJWT, changePassword)
 

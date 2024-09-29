@@ -42,6 +42,10 @@ const userSchema = new Schema(
             type: Schema.Types.ObjectId,
             ref: "TeacherDetails"
         },
+        enrolledCourses: [{
+            type: Schema.Types.ObjectId,
+            ref: "Course",
+        }]
     },
     {
     timestamps: true
