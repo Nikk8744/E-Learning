@@ -265,9 +265,7 @@ const enrollInCourse = async (req, res) => {
     } catch (error) {
         console.log(error)
         return res.status(500).json({  msg: "Server error while enrolling student in course" })
-
     }
-
 }
 
 export {

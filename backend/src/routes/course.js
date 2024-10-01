@@ -12,10 +12,14 @@ router.route("/getAll").get(getAllCourse);
 router.route("/getNewCourses").get(getNewCourses);
 router.route("/getTopCourses").get(getTopRatedCourse);
 
+
+
 router.route("/:courseId").get(getCourseById);
 
 router.route("/teacher/:teacherId").get(verifyJWT,isTeacher, getAllCoursesOfTeacher);
 router.route("/student/:studentId").get(verifyJWT, getAllEnrolledCourses);
+
+router.route("/enroll/:courseId").patch(verifyJWT, enrollInCourse);
 
 router.route("/update").patch(verifyJWT, isTeacher, updateCourse);
 
