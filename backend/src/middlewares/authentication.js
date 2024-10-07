@@ -36,3 +36,10 @@ export const isTeacher = async(req, res, next) => {
     // }
     // next();
 }
+
+export const isReviewer = (req, res, next) => {
+    if (!req.user.isReviewer) {
+        return res.status(403).json({ message: 'Access denied: Not a reviewer' });
+    }
+    next();
+};

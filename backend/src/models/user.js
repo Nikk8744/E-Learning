@@ -45,7 +45,11 @@ const userSchema = new Schema(
         enrolledCourses: [{
             type: Schema.Types.ObjectId,
             ref: "Course",
-        }]
+        }],
+        isReviewer: {
+            type: Boolean,
+            default: false,
+        },
     },
     {
     timestamps: true
