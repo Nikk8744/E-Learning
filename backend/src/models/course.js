@@ -45,8 +45,11 @@ const courseSchema = new Schema(
         rating: {
             type: Number,
             default: 0,
-        }
-        
+        },
+        enrolledStudents: [{
+            type: Schema.Types.ObjectId,
+            ref: "User",
+          }],
     },{
     timestamps: true,
 });

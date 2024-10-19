@@ -35,6 +35,7 @@ const registerUser = async(req, res) => {
      if(!createdUser){
          return res.status(400).json({ msg: "SOmething went wrong while registering!!"})
      }
+
  
      return res.status(201)
      .json({
