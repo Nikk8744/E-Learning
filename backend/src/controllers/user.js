@@ -143,7 +143,7 @@ const updateUserDetails = async(req, res) => {
             req.user?._id,
             {
                 $set: {
-                    fullName,
+                    username,
                     email: email
                 }
             },
