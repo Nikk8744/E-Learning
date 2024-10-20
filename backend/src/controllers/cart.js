@@ -66,8 +66,35 @@ const getCart = async (req, res) => {
     }
 }
 
+const buyCourse = async(req, res) => {
+
+    const { courseId } = req.params;
+
+    const course = await Course.findById(courseId)
+    if (!course) {
+        return res.status(404).json({ msg: "Course not found!" });
+    }
+
+    const user = await User.findById(req.user?._id);
+    if(user.enrolledCourses.includes(courseId)){
+        return res.status(400).json({msg: "You have already  enrollrd in this course"})
+    }
+
+    user.cart = user.cart.filter((id) => id.toString() !== courseId.toString());        
+    // Adding to user ke enrolledCOurse mai
+    user.enrolledCourses.push(courseId);
+    await user.save();
+
+
+    return res.status(200).json({
+        msg: "Course bought Successfully and course removed from cart and added to enrolledCourse!!!",
+        enrolledCourses:  user.enrolledCourses,
+    })
+}
+
 export {
     addToCart,
     removeFromCart,
     getCart,
+    buyCourse,
 }

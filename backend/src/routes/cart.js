@@ -1,11 +1,12 @@
 import { Router } from "express";
-import { addToCart, getCart, removeFromCart } from "../controllers/cart.js";
+import { addToCart, buyCourse, getCart, removeFromCart } from "../controllers/cart.js";
 import { verifyJWT } from "../middlewares/authentication.js";
 
 const router = Router();
 router.use(verifyJWT)
 
 router.route("/:courseId").post(addToCart);
+router.route("/buy/:courseId").post(verifyJWT, buyCourse);
 
 router.route("/getCart").get(getCart);
 
