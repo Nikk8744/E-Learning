@@ -5,7 +5,8 @@ const createNotification = async(req, res) => {
 
     const isAdmin = req.user?.role === "Admin" || req.user?.role === "Teacher";
     if (!isAdmin) {
-        return res.status(401).json({ msg: "You are not authorized to send notifications!!"})
+        // return res.status(401).json({ msg: "You are not authorized to send notifications!!"})
+        throw new Error("You are not authorized to send notifications!")
     }
 
    try {

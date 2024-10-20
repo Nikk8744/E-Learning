@@ -1,6 +1,7 @@
 import { isValidObjectId } from "mongoose";
 import { Course } from "../models/course.js";
 import { User } from "../models/user.js";
+import { createNotification } from "./notification.js";
 
 const createCourse = async(req, res) => {
     const {title, description, price, material, level, category, duration, rating} = req.body;
@@ -218,10 +219,9 @@ const getAllCoursesOfTeacher = async (req, res) => {
 }
 
 const getAllEnrolledCourses = async (req, res) => {
-    const studentId = req.user?._id;
-
+    
     try {
-            const enrolledCOurses = await Course.findById(studentId).populate("enrolledCourses");
+            const enrolledCOurses = await User.findById(req.user?._id).populate("enrolledCourses");
             if(!enrolledCOurses){
                 return res.status(404).json({
                     msg:  "No courses found for the Student!!"
@@ -230,7 +230,7 @@ const getAllEnrolledCourses = async (req, res) => {
             
             return res.status(200).json({
                 msg:  "All Enrolled Courses fetched successfully!!",
-                enrolledCOurses,
+                enrolledCOurses: enrolledCOurses.enrolledCourses,
             })
     } catch (error) {
         console.log(error)
@@ -269,11 +269,6 @@ const enrollInCourse = async (req, res) => {
 }
 
 const buyCourse = async(req, res) => {
-    // check if course hai ke nhi
-    // check if user ne already biy kiya hai kya?
-    // phir agar cart mai hai then remove it
-    // then add course to enrolledCourse wali list
-    // return successfull msg
 
     const { courseId } = req.params;
 
@@ -287,11 +282,11 @@ const buyCourse = async(req, res) => {
         return res.status(400).json({msg: "You have already  enrollrd in this course"})
     }
 
-    user.cart = user.cart.filter((id) =>  id.toString() !== courseId.toString());
-
-    // adding to user ke enrolledCourses mai
+    user.cart = user.cart.filter((id) => id.toString() !== courseId.toString());        
+    // Adding to user ke enrolledCOurse mai
     user.enrolledCourses.push(courseId);
-    await user.save()
+    await user.save();
+
 
     return res.status(200).json({
         msg: "Course bought Successfully and course removed from cart and added to enrolledCourse!!!",

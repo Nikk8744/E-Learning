@@ -19,7 +19,7 @@ router.route("/getTopCourses").get(getTopRatedCourse);
 router.route("/:courseId").get(getCourseById);
 
 router.route("/teacher/:teacherId").get(verifyJWT,isTeacher, getAllCoursesOfTeacher);
-router.route("/student/:studentId").get(verifyJWT, getAllEnrolledCourses);
+router.route("/student/getEnrolledCourses").get(verifyJWT, getAllEnrolledCourses);
 
 router.route("/enroll/:courseId").patch(verifyJWT, enrollInCourse);
 
