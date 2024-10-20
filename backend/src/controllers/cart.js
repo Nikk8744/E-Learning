@@ -1,3 +1,4 @@
+import { json } from "express";
 import { Course } from "../models/course.js";
 import { User } from "../models/user.js";
 
@@ -92,9 +93,42 @@ const buyCourse = async(req, res) => {
     })
 }
 
+const buyAllCOursesFromCart = async(req, res) => {
+
+    try {
+        const user = await User.findById(req.user?._id).populate('cart');
+        if (user.cart.length === 0) {
+            return res.status(400).json({ msg: "Your cart is empty!!"})        
+        }
+    
+        // phele sab course ko cart mai se filter krna 
+        const coursesToEnroll = user.cart.filter((courseId) => 
+            !user.enrolledCourses.includes(courseId.toString())
+        );
+        if(coursesToEnroll.length === 0){
+            return res.status(400).json({msg: "You have already  enrolled in all the courses in your cart!!"}) 
+        }
+    
+        // joo course  enroll krna hai unko enrolledCourses mai add krna
+        user.enrolledCourses.push(...coursesToEnroll);
+    
+        user.cart = []
+        await user.save();
+    
+        return res.status(200).json({
+            msg: "All courses in cart have been successfully added to enrolled courses!!",
+            enrolledCourses: user.enrolledCourses,
+        })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({msg: "Server Error while add all course from cart to enrolled courses"})
+    }
+}
+
 export {
     addToCart,
     removeFromCart,
     getCart,
     buyCourse,
+    buyAllCOursesFromCart
 }
